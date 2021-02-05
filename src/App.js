@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Route, Switch } from 'react-router';
 
-function App() {
+import './App.css';
+import Login from './containers/login';
+import APIKeys from './containers/apiKeys';
+import { isUserAuthorized } from './redux/selectors/userDataSelectors';
+import { checkJwtToken } from './redux/actions/userDataActions';
+
+const App = () => {
+  const isAuthorized = useSelector(isUserAuthorized);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(checkJwtToken());
+  }, [dispatch]);
+
+  if (!isAuthorized)
+    return (
+      <Switch>
+        <Route path="/" component={Login} />
+      </Switch>
+    );
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Switch>
+      <Route exact path="/keys" component={APIKeys} />
+    </Switch>
   );
-}
+};
 
 export default App;
